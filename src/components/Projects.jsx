@@ -212,147 +212,99 @@ function Projects() {
      ---------------------------------------- */
 
   useEffect(() => {
-
     const cards = cardRefs.current
 
     cards.forEach((card, index) => {
-
       if (!card) return
-
 
       let offset =
         (index - activeIndex + projects.length) %
         projects.length
 
-
       if (offset > projects.length / 2) {
         offset -= projects.length
       }
 
+      const isMobile = window.innerWidth <= 768
+      const sideOffset = isMobile ? 0 : 440
+      const farOffset = isMobile ? 0 : 720
 
       let x = 0
-
       let scale = 0.6
-
       let opacity = 0
-
       let rotateY = 0
-
       let zIndex = 1
 
-
       if (offset === 0) {
-
         // CENTER
-
         x = 0
-
         scale = 1
-
         opacity = 1
-
         rotateY = 0
-
         zIndex = 5
-
       } else if (offset === -1) {
-
         // LEFT
-
-        x = -440
-
-        scale = 0.68
-
-        opacity = 0.32
-
-        rotateY = 10
-
+        x = -sideOffset
+        scale = isMobile ? 0.85 : 0.68
+        opacity = isMobile ? 0 : 0.32
+        rotateY = isMobile ? 0 : 10
         zIndex = 3
-
       } else if (offset === 1) {
-
         // RIGHT
-
-        x = 440
-
-        scale = 0.68
-
-        opacity = 0.32
-
-        rotateY = -10
-
+        x = sideOffset
+        scale = isMobile ? 0.85 : 0.68
+        opacity = isMobile ? 0 : 0.32
+        rotateY = isMobile ? 0 : -10
         zIndex = 3
-
       } else {
-
         // FAR CARDS
-
-        x = offset < 0 ? -720 : 720
-
+        x = offset < 0 ? -farOffset : farOffset
         scale = 0.55
-
         opacity = 0
-
         rotateY =
           offset < 0
             ? 18
             : -18
-
         zIndex = 1
       }
-
 
       gsap.to(card, {
         x,
         scale,
         opacity,
         rotateY,
-
         duration: 0.75,
-
         ease: 'power3.out',
-
         zIndex,
       })
-
     })
-
   }, [activeIndex])
-
 
   /* ----------------------------------------
      KEYBOARD NAVIGATION
      ---------------------------------------- */
 
   useEffect(() => {
-
     const handleKeyDown = (event) => {
-
       if (selectedProject !== null) return
-
 
       if (event.key === 'ArrowRight') {
         nextProject()
       }
 
-
       if (event.key === 'ArrowLeft') {
         previousProject()
       }
 
-
       if (event.key === 'Enter') {
         setSelectedProject(activeIndex)
       }
-
     }
-
 
     window.addEventListener(
       'keydown',
       handleKeyDown
     )
-
 
     return () => {
       window.removeEventListener(
@@ -360,72 +312,51 @@ function Projects() {
         handleKeyDown
       )
     }
-
   }, [activeIndex, selectedProject])
-
 
   /* ----------------------------------------
      MOUSE TILT
      ---------------------------------------- */
 
   const handlePointerMove = (event) => {
-
     if (
       !deckRef.current ||
-      selectedProject !== null
+      selectedProject !== null ||
+      window.innerWidth <= 768
     ) {
       return
     }
 
-
     const rect =
       deckRef.current.getBoundingClientRect()
-
 
     const x =
       (event.clientX - rect.left) /
         rect.width -
       0.5
 
-
     const y =
       (event.clientY - rect.top) /
         rect.height -
       0.5
 
-
     gsap.to(deckRef.current, {
-
       rotateX: -y * 6,
-
       rotateY: x * 8,
-
       duration: 0.35,
-
       ease: 'power2.out',
-
     })
-
   }
 
-
   const handlePointerLeave = () => {
-
     if (!deckRef.current) return
 
-
     gsap.to(deckRef.current, {
-
       rotateX: 0,
-
       rotateY: 0,
-
       duration: 0.5,
-
       ease: 'power3.out',
-
     })
-
   }
 
 

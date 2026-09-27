@@ -10,7 +10,7 @@ function Experience() {
 
       <div className="section-content">
 
-        <div className="-heading">
+        <div className="journey-heading">
           <h2>
             Learning by building.
           </h2>

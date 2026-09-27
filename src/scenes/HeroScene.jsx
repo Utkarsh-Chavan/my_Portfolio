@@ -1,4 +1,4 @@
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import { useScene } from './SceneController'
 
@@ -71,27 +71,27 @@ function DigitalCore() {
       let targetScale = 0.85
       let targetX = 0
       let targetY = 0
-    
+
       if (sceneState === 'loading') {
         targetScale = 0.15
       }
-    
+
       if (sceneState === 'about') {
         targetScale = 0.65
         targetX = 0.35
         targetY = 0.15
       }
-    
+
       const currentScale = groupRef.current.scale.x
-    
+
       const nextScale =
         currentScale + (targetScale - currentScale) * 0.04
-    
+
       groupRef.current.scale.setScalar(nextScale)
-    
+
       groupRef.current.position.x +=
         (targetX - groupRef.current.position.x) * 0.04
-    
+
       groupRef.current.position.y +=
         (targetY - groupRef.current.position.y) * 0.04
     }
@@ -208,6 +208,20 @@ function DigitalCore() {
   )
 }
 
+function ResponsiveDigitalCore() {
+  const { viewport } = useThree()
+  const isMobile = viewport.width < 5.5
+
+  const position = isMobile ? [0, 0.3, 0] : [1.0, 0, 0]
+  const scale = isMobile ? 0.7 : 0.9
+
+  return (
+    <group position={position} scale={scale}>
+      <DigitalCore />
+    </group>
+  )
+}
+
 function HeroScene() {
   return (
     <Canvas
@@ -238,13 +252,8 @@ function HeroScene() {
       {/* Background particle environment */}
       <Particles />
 
-      {/* Digital Core positioned toward the right */}
-      <group
-        position={[1.0, 0, 0]}
-        scale={0.9}
-      >
-        <DigitalCore />
-      </group>
+      {/* Digital Core positioned responsively */}
+      <ResponsiveDigitalCore />
 
     </Canvas>
   )
